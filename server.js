@@ -1,18 +1,44 @@
-const express = require("express");
-const mongoose = require("mongoose");
-require("dotenv").config();
+import express from "express";
+import { config } from "dotenv";
+import mongoose from "mongoose";
+import { testRoute } from "./services/routes/test.route.js";
+import { apiRoute } from "./services/routes/api.route.js";
+
+// Inizializza la gestione dei file .env
+config();
+
+// Crea una porta
+const PORT = process.env.PORT || 3001;
+
+// Crea il server
 const app = express();
-const port = 3005;
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+// Abilita la comunicazione con dati JSON
+app.use(express.json());
 
-const initserver = async () => {
-  await mongoose.connect(process.env.DBURL);
-  app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
-  });
+// Importa routes
+// http/localhost:3001/test
+app.use("/test", testRoute);
+// http/localhost:3001/api
+app.use("/api", apiRoute);
+
+// Funzione per inizializzare il server
+const initServer = async () => {
+  try {
+    // Aspettiamo di connetterci al database
+    await mongoose.connect(process.env.DBURL);
+
+    // Connessi al database
+    console.log("Connesso al database");
+
+    // Abilita server
+    app.listen(PORT, () => {
+      console.log(`Il nostro server sta ascoltando alla porta ${PORT}`);
+    });
+  } catch (err) {
+    console.error("Connessione al database fallita!", err);
+  }
 };
 
-initserver();
+// Invochiamo la funzione per inizializzare il server
+initServer();
