@@ -1,14 +1,15 @@
 import express from "express";
 import { config } from "dotenv";
 import mongoose from "mongoose";
-import { testRoute } from "./services/routes/test.route.js";
+
 import { apiRoute } from "./services/routes/api.route.js";
+import { testRoute } from "./services/routes/test.route.js";
 
 // Inizializza la gestione dei file .env
 config();
 
 // Crea una porta
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3005;
 
 // Crea il server
 const app = express();

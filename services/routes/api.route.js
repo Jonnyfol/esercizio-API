@@ -1,6 +1,5 @@
 import { Router } from "express";
-import User from "../models/user.model.js";
-
+import User from "../models/user.models.js";
 // Creiamo un nuovo Router e esportiamolo per essere utilizzato altrove
 export const apiRoute = Router();
 
