@@ -1,42 +1,30 @@
 import { Router } from "express";
 import User from "../models/user.models.js";
-// Creiamo un nuovo Router e esportiamolo per essere utilizzato altrove
-export const apiRoute = Router();
 
-// Richiesta GET all'indirizzo "/" (Esempio: http:localhost:3001/api)
-apiRoute.get("/", async (req, res) => {
+// Creiamo un nuovo Router e esportiamolo per essere utilizzato altrove
+export const authorRoute = Router();
+
+// Richiesta GET all'indirizzo "/"
+authorRoute.get("/", async (req, res) => {
   // Mandiamo una risposta al client di tipo messaggio testuale
   res.send("Sei al route principale dell'api");
 });
 
-// Richiesta GET all'indirizzo "/:id" (Esempio: http:localhost:3001/api/fhjdjh2398fdhj2)
-apiRoute.get("/:id", async (req, res, next) => {
-  try {
-    // Cerchiamo un documento utente con l'id uguale a quello passato come parametro
-    let user = await User.findById(req.params.id);
-    // Mandiamo in risposta al client l'utente trovato
-    res.send(user);
-  } catch (err) {
-    // In caso di errore, procediamo
-    next(err);
-  }
-});
-
-// Richiesta POST all'indirizzo "/:id" (Esempio: http:localhost:3001/api/fhjdjh2398fdhj2)
-apiRoute.post("/", async (req, res, next) => {
+// Richiesta POST all'indirizzo "/authors"
+authorRoute.post("/authors", async (req, res, next) => {
   try {
     // Creiamo un nuovo documento utente, con i valori presi dal body della richiesta
     let user = await User.create(req.body);
-    // Mandiamo in risposta l'utente creato e un status code di 400 (successo)
-    res.send(user).status(400);
+    // Mandiamo in risposta l'utente creato e uno status code di 201 (Created)
+    res.status(201).send(user);
   } catch (err) {
     // In caso di errore, procediamo
     next(err);
   }
 });
 
-// Richiesta PUT all'indirizzo "/" (Esempio: http:localhost:3001/api/fhjdjh2398fdhj2)
-apiRoute.put("/:id", async (req, res, next) => {
+// Richiesta PUT all'indirizzo "/:id"
+authorRoute.put("/:id", async (req, res, next) => {
   try {
     // Cerchiamo un documento utente dal suo id e modifichiamolo con i valori presi dal body della richiesta
     let user = await User.findByIdAndUpdate(req.params.id, req.body, {
@@ -49,15 +37,28 @@ apiRoute.put("/:id", async (req, res, next) => {
   }
 });
 
-// Richiesta DELETE all'indirizzo "/" (Esempio: http:localhost:3001/api/fhjdjh2398fdhj2)
-apiRoute.delete("/:id", async (req, res, next) => {
+// Richiesta DELETE all'indirizzo "/:id"
+authorRoute.delete("/:id", async (req, res, next) => {
   try {
     // Cerchiamo un documento utente usando una query specificia: deve avere l'id uguale a quello passato come parametro all'indirizzo
     await User.deleteOne({
       _id: req.params.id,
     });
     // Mandiamo un messaggio in risposta ed uno status code di 204
-    res.send("L'utente è stato eliminato correttamente").status(204);
+    res.status(204).send("L'utente è stato eliminato correttamente");
+  } catch (err) {
+    // In caso di errore, procediamo
+    next(err);
+  }
+});
+
+// Richiesta GET per gli autori
+authorRoute.get("/authors", async (req, res, next) => {
+  try {
+    // Cerchiamo tutti i documenti utente
+    let users = await User.find();
+    // Mandiamo in risposta gli utenti trovati e uno status code di 200 (OK)
+    res.status(200).send(users);
   } catch (err) {
     // In caso di errore, procediamo
     next(err);

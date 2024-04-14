@@ -1,9 +1,9 @@
 import express from "express";
 import { config } from "dotenv";
 import mongoose from "mongoose";
-
-import { apiRoute } from "./services/routes/api.route.js";
-import { testRoute } from "./services/routes/test.route.js";
+import cors from "cors";
+import { authorRoute } from "./services/routes/author.route.js";
+import { postRoute } from "./services/routes/post.route.js";
 
 // Inizializza la gestione dei file .env
 config();
@@ -17,11 +17,14 @@ const app = express();
 // Abilita la comunicazione con dati JSON
 app.use(express.json());
 
-// Importa routes
-// http/localhost:3001/test
-app.use("/test", testRoute);
+// cors
+
+app.use(cors());
+
 // http/localhost:3001/api
-app.use("/api", apiRoute);
+app.use("/api", authorRoute);
+
+app.use("/api", postRoute);
 
 // Funzione per inizializzare il server
 const initServer = async () => {

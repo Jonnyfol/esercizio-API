@@ -35,7 +35,7 @@ const userSchema = new Schema(
 
     // L'età deve essere un numero, obbligatorio, dal valore minimo di 1 e massimo di 80
     bornDate: {
-      type: Number,
+      type: String,
       required: true,
     },
 
