@@ -9,7 +9,7 @@ const BlogItem = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch("http://localhost:3005/api/posts");
+        const response = await fetch("http://localhost:3005/posts");
         if (response.ok) {
           const postsData = await response.json();
           setPosts(postsData);
@@ -26,21 +26,26 @@ const BlogItem = () => {
 
   return (
     <div>
-      {posts.map((post) => (
-        <Link to={`/blog/${post._id}`} className="blog-link" key={post._id}>
-          <Card className="blog-card">
-            <Card.Img variant="top" src={post.cover} className="blog-cover" />
-            <Card.Body>
-              <Card.Title>{post.title}</Card.Title>
-            </Card.Body>
-            <Card.Footer>
-              <div>
-                di <span>{post.author.name}</span>
-              </div>
-            </Card.Footer>
-          </Card>
-        </Link>
-      ))}
+      {posts.map(
+        (
+          post // Modifica: Utilizzare "post" invece di "posts"
+        ) => (
+          <Link to={`/blog/${post._id}`} className="blog-link" key={post._id}>
+            {" "}
+            <Card className="blog-card">
+              <Card.Img variant="top" src={post.cover} className="blog-cover" />{" "}
+              <Card.Body>
+                <Card.Title>{post.title}</Card.Title>
+              </Card.Body>
+              <Card.Footer>
+                <div>
+                  di <span>{post.author.name}</span>
+                </div>
+              </Card.Footer>
+            </Card>
+          </Link>
+        )
+      )}
     </div>
   );
 };

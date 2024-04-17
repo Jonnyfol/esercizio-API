@@ -17,7 +17,7 @@ function App() {
 
   const getAuthors = async () => {
     try {
-      const response = await fetch("http://localhost:3005/api/authors");
+      const response = await fetch("http://localhost:3005/authors");
       if (response.ok) {
         const authors = await response.json();
         console.log(authors);
