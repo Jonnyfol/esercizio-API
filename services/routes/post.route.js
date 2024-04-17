@@ -4,12 +4,6 @@ import Post from "../models/post.models.js";
 // Creiamo un nuovo Router e esportiamolo per essere utilizzato altrove
 export const postRoute = Router();
 
-// Richiesta GET all'indirizzo "/"
-postRoute.get("/", async (req, res) => {
-  // Mandiamo una risposta al client di tipo messaggio testuale
-  res.send("Sei al route principale dell'api");
-});
-
 // Richiesta POST per creare un nuovo post
 postRoute.post("/", async (req, res, next) => {
   try {
@@ -53,7 +47,7 @@ postRoute.delete("/:id", async (req, res, next) => {
 });
 
 // Richiesta GET per ottenere tutti i post
-postRoute.get("/posts", async (req, res, next) => {
+postRoute.get("/", async (req, res, next) => {
   try {
     // Cerchiamo tutti i documenti post
     let posts = await Post.find();

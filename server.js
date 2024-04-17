@@ -21,10 +21,9 @@ app.use(express.json());
 
 app.use(cors());
 
-// http/localhost:3001/api
-app.use("/api", authorRoute);
+app.use("/authors", authorRoute);
 
-app.use("/api", postRoute);
+app.use("/posts", postRoute);
 
 // Funzione per inizializzare il server
 const initServer = async () => {

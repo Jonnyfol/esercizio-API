@@ -4,14 +4,8 @@ import User from "../models/user.models.js";
 // Creiamo un nuovo Router e esportiamolo per essere utilizzato altrove
 export const authorRoute = Router();
 
-// Richiesta GET all'indirizzo "/"
-authorRoute.get("/", async (req, res) => {
-  // Mandiamo una risposta al client di tipo messaggio testuale
-  res.send("Sei al route principale dell'api");
-});
-
 // Richiesta POST all'indirizzo "/authors"
-authorRoute.post("/authors", async (req, res, next) => {
+authorRoute.post("/", async (req, res, next) => {
   try {
     // Creiamo un nuovo documento utente, con i valori presi dal body della richiesta
     let user = await User.create(req.body);
@@ -53,7 +47,7 @@ authorRoute.delete("/:id", async (req, res, next) => {
 });
 
 // Richiesta GET per gli autori
-authorRoute.get("/authors", async (req, res, next) => {
+authorRoute.get("/", async (req, res, next) => {
   try {
     // Cerchiamo tutti i documenti utente
     let users = await User.find();
