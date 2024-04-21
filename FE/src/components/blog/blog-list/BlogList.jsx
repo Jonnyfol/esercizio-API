@@ -33,7 +33,7 @@ const BlogList = () => {
             marginBottom: 50,
           }}
         >
-          <BlogItem key={post._id} {...post} />
+          <BlogItem key={post._id} post={post} />
         </Col>
       ))}
     </Row>

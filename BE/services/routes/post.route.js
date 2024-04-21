@@ -1,6 +1,12 @@
 import { Router } from "express";
 import Post from "../models/post.models.js";
+import { v2 as cloudinary } from "cloudinary";
 
+cloudinary.config({
+  cloud_name: "ddsgne1cx",
+  api_key: "238131585247738",
+  api_secret: "AJtDAO9FcvEX8xFUWbGFrhNjnHM",
+});
 // Creiamo un nuovo Router e esportiamolo per essere utilizzato altrove
 export const postRoute = Router();
 
@@ -53,6 +59,27 @@ postRoute.get("/", async (req, res, next) => {
     let posts = await Post.find();
     // Mandiamo in risposta i post trovati e uno status code di 200 (OK)
     res.status(200).send(posts);
+  } catch (err) {
+    // In caso di errore, procediamo
+    next(err);
+  }
+});
+
+// Richiesta PATCH all'indirizzo "/:authorId/avatar"
+postRoute.patch("/:id/cover", async (req, res, next) => {
+  try {
+    // Upload dell'immagine su Cloudinary
+    const result = await cloudinary.uploader.upload(req.body.avatar);
+
+    // Salvataggio dell'URL dell'immagine nel database
+    let posts = await Post.findByIdAndUpdate(
+      req.params.authorId,
+      { avatar: result.secure_url },
+      {
+        new: true, // L'oggetto restituito deve essere quello aggiornato
+      }
+    );
+    res.send(user);
   } catch (err) {
     // In caso di errore, procediamo
     next(err);

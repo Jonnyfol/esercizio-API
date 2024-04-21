@@ -4,6 +4,12 @@ import mongoose from "mongoose";
 import cors from "cors";
 import { authorRoute } from "./services/routes/author.route.js";
 import { postRoute } from "./services/routes/post.route.js";
+import {
+  badRequestHandler,
+  genericErrorHandler,
+  notfoundHandler,
+  unauthorizedHandler,
+} from "./errorHandlers.js";
 
 // Inizializza la gestione dei file .env
 config();
@@ -24,6 +30,11 @@ app.use(cors());
 app.use("/authors", authorRoute);
 
 app.use("/posts", postRoute);
+
+app.use(badRequestHandler);
+app.use(unauthorizedHandler);
+app.use(notfoundHandler);
+app.use(genericErrorHandler);
 
 // Funzione per inizializzare il server
 const initServer = async () => {
