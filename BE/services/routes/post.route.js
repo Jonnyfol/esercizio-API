@@ -1,12 +1,8 @@
 import { Router } from "express";
 import Post from "../models/post.models.js";
 import { v2 as cloudinary } from "cloudinary";
+import { avatarmulter } from "../middlewares/multer.js";
 
-cloudinary.config({
-  cloud_name: "ddsgne1cx",
-  api_key: "238131585247738",
-  api_secret: "AJtDAO9FcvEX8xFUWbGFrhNjnHM",
-});
 // Creiamo un nuovo Router e esportiamolo per essere utilizzato altrove
 export const postRoute = Router();
 
@@ -65,21 +61,39 @@ postRoute.get("/", async (req, res, next) => {
   }
 });
 
-// Richiesta PATCH all'indirizzo "/:authorId/avatar"
-postRoute.patch("/:id/cover", async (req, res, next) => {
-  try {
-    // Upload dell'immagine su Cloudinary
-    const result = await cloudinary.uploader.upload(req.body.avatar);
+// Richiesta PATCH all'indirizzo "/:id/cover"
+postRoute.patch(
+  "/:id/cover",
+  avatarmulter.single("cover"),
+  async (req, res, next) => {
+    try {
+      // Salvataggio dell'URL dell'immagine nel database
+      let post = await Post.findByIdAndUpdate(
+        req.params.id,
+        { cover: req.file.path },
+        {
+          new: true, // L'oggetto restituito deve essere quello aggiornato
+        }
+      );
+      res.send(post);
+    } catch (err) {
+      // In caso di errore, procediamo
+      next(err);
+    }
+  }
+);
 
-    // Salvataggio dell'URL dell'immagine nel database
-    let posts = await Post.findByIdAndUpdate(
-      req.params.authorId,
-      { avatar: result.secure_url },
-      {
-        new: true, // L'oggetto restituito deve essere quello aggiornato
-      }
-    );
-    res.send(user);
+// Richiesta GET per ottenere un singolo post con un determinato ID
+postRoute.get("/:id", async (req, res, next) => {
+  try {
+    // Cerchiamo un singolo documento post usando l'ID passato come parametro nell'URL
+    let post = await Post.findById(req.params.id);
+    // Se non viene trovato il post, restituiamo uno status 404 (Not Found)
+    if (!post) {
+      return res.status(404).send("Post non trovato");
+    }
+    // Mandiamo in risposta il post trovato e uno status code di 200 (OK)
+    res.status(200).send(post);
   } catch (err) {
     // In caso di errore, procediamo
     next(err);

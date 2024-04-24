@@ -24,7 +24,6 @@ const app = express();
 app.use(express.json());
 
 // cors
-
 app.use(cors());
 
 app.use("/authors", authorRoute);

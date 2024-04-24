@@ -3,27 +3,39 @@ import { Container, Image } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import BlogAuthor from "../../components/blog/blog-author/BlogAuthor";
 import BlogLike from "../../components/likes/BlogLike";
-import posts from "../../data/posts.json";
 import "./styles.css";
-const Blog = props => {
+
+const Blog = () => {
   const [blog, setBlog] = useState({});
   const [loading, setLoading] = useState(true);
   const params = useParams();
   const navigate = useNavigate();
+
   useEffect(() => {
     const { id } = params;
-    const blog = posts.find(post => post._id.toString() === id);
 
-    if (blog) {
-      setBlog(blog);
-      setLoading(false);
-    } else {
-      navigate("/404");
-    }
-  }, []);
+    const fetchBlog = async () => {
+      try {
+        const response = await fetch(`http://localhost:3005/posts/${id}`);
+        if (response.ok) {
+          const blogData = await response.json();
+          setBlog(blogData);
+          setLoading(false);
+        } else {
+          throw new Error("Network response was not ok");
+        }
+      } catch (error) {
+        console.error("Error fetching blog:", error);
+        setLoading(false);
+        navigate("/404");
+      }
+    };
+
+    fetchBlog();
+  }, [params, navigate]);
 
   if (loading) {
-    return <div>loading</div>;
+    return <div>Loading...</div>;
   } else {
     return (
       <div className="blog-details-root">
@@ -37,12 +49,8 @@ const Blog = props => {
             </div>
             <div className="blog-details-info">
               <div>{blog.createdAt}</div>
-              <div>{`lettura da ${blog.readTime.value} ${blog.readTime.unit}`}</div>
-              <div
-                style={{
-                  marginTop: 20,
-                }}
-              >
+              <div>{`Lettura in ${blog.readTime.value} ${blog.readTime.unit}`}</div>
+              <div style={{ marginTop: 20 }}>
                 <BlogLike defaultLikes={["123"]} onChange={console.log} />
               </div>
             </div>

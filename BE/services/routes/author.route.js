@@ -1,12 +1,7 @@
 import { Router } from "express";
 import User from "../models/user.models.js";
 import { v2 as cloudinary } from "cloudinary";
-
-cloudinary.config({
-  cloud_name: "ddsgne1cx",
-  api_key: "238131585247738",
-  api_secret: "AJtDAO9FcvEX8xFUWbGFrhNjnHM",
-});
+import { avatarmulter } from "../middlewares/multer.js";
 
 // Creiamo un nuovo Router e esportiamolo per essere utilizzato altrove
 export const authorRoute = Router();
@@ -66,21 +61,42 @@ authorRoute.get("/", async (req, res, next) => {
   }
 });
 
-// Richiesta PATCH all'indirizzo "/:authorId/avatar"
-authorRoute.patch("/:id/avatar", async (req, res, next) => {
-  try {
-    // Upload dell'immagine su Cloudinary
-    const result = await cloudinary.uploader.upload(req.body.avatar);
+// Richiesta PATCH all'indirizzo "/:id/avatar"
+authorRoute.patch(
+  "/:id/avatar",
+  avatarmulter.single("avatar"),
+  async (req, res, next) => {
+    try {
+      // Upload dell'immagine su Cloudinary
+      // const result = await cloudinary.uploader.upload(req.body.avatar);
 
-    // Salvataggio dell'URL dell'immagine nel database
-    let user = await User.findByIdAndUpdate(
-      req.params.authorId,
-      { avatar: result.secure_url },
-      {
-        new: true, // L'oggetto restituito deve essere quello aggiornato
-      }
-    );
-    res.send(user);
+      // Salvataggio dell'URL dell'immagine nel database
+      let user = await User.findByIdAndUpdate(
+        req.params.id,
+        { avatar: req.file.path },
+        {
+          new: true, // L'oggetto restituito deve essere quello aggiornato
+        }
+      );
+      res.send(user);
+    } catch (err) {
+      // In caso di errore, procediamo
+      next(err);
+    }
+  }
+);
+
+// Richiesta GET per ottenere un singolo autore con un determinato ID
+authorRoute.get("/:id", async (req, res, next) => {
+  try {
+    // Cerchiamo un singolo autore usando l'ID passato come parametro nell'URL
+    let user = await User.findById(req.params.id);
+    // Se non viene trovato l'autore, restituiamo uno status 404 (Not Found)
+    if (!user) {
+      return res.status(404).send("Post non trovato");
+    }
+    // Mandiamo in risposta l'autore trovato e uno status code di 200 (OK)
+    res.status(200).send(user);
   } catch (err) {
     // In caso di errore, procediamo
     next(err);
