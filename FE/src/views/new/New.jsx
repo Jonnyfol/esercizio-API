@@ -8,7 +8,7 @@ import draftToHtml from "draftjs-to-html";
 
 const NewBlogPost = () => {
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("Categoria 1");
+  const [category, setCategory] = useState("Viaggi");
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
@@ -33,6 +33,17 @@ const NewBlogPost = () => {
       title: title,
       category: category,
       content: content,
+      readTime: {
+        value: 5,
+        unit: "min",
+      },
+      author: {
+        name: "Giulia Ros",
+        avatar: "https://www.example.com/avatars/giulia-rossi.jpg",
+      },
+      cover:
+        "https://res.cloudinary.com/ddsgne1cx/image/upload/v1713985263/avatar/gkcpo9wwdigvy0ryjijm.jpg",
+      comments: [],
     };
 
     try {
@@ -48,7 +59,7 @@ const NewBlogPost = () => {
         console.log("Post inviato con successo!");
         // Pulisci il form
         setTitle("");
-        setCategory("Categoria 1");
+        setCategory("Viaggi");
         setEditorState(() => EditorState.createEmpty());
       } else {
         console.log("Errore nell'invio del post");
@@ -79,11 +90,11 @@ const NewBlogPost = () => {
             value={category}
             onChange={handleCategoryChange}
           >
-            <option>Categoria 1</option>
-            <option>Categoria 2</option>
-            <option>Categoria 3</option>
-            <option>Categoria 4</option>
-            <option>Categoria 5</option>
+            <option>Viaggi</option>
+            <option>Tecnologia</option>
+            <option>Cucina</option>
+            <option>Salute</option>
+            <option>Altro</option>
           </Form.Control>
         </Form.Group>
         <Form.Group controlId="blog-content" className="mt-3">

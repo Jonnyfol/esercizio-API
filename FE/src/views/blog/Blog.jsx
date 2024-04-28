@@ -3,6 +3,7 @@ import { Container, Image } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import BlogAuthor from "../../components/blog/blog-author/BlogAuthor";
 import BlogLike from "../../components/likes/BlogLike";
+import CommentSection from "../../components/blog/comment-section/CommentSection";
 import "./styles.css";
 
 const Blog = () => {
@@ -42,7 +43,6 @@ const Blog = () => {
         <Container>
           <Image className="blog-details-cover" src={blog.cover} fluid />
           <h1 className="blog-details-title">{blog.title}</h1>
-
           <div className="blog-details-container">
             <div className="blog-details-author">
               <BlogAuthor {...blog.author} />
@@ -55,12 +55,12 @@ const Blog = () => {
               </div>
             </div>
           </div>
-
           <div
             dangerouslySetInnerHTML={{
               __html: blog.content,
             }}
           ></div>
+          <CommentSection postId={blog._id} />{" "}
         </Container>
       </div>
     );

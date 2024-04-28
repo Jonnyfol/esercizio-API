@@ -1,6 +1,5 @@
 import { Router } from "express";
 import Post from "../models/post.models.js";
-import { v2 as cloudinary } from "cloudinary";
 import { avatarmulter } from "../middlewares/multer.js";
 
 // Creiamo un nuovo Router e esportiamolo per essere utilizzato altrove
@@ -96,6 +95,111 @@ postRoute.get("/:id", async (req, res, next) => {
     res.status(200).send(post);
   } catch (err) {
     // In caso di errore, procediamo
+    next(err);
+  }
+});
+
+// Richiesta GET per ottenere tutti i commenti di uno specifico post
+postRoute.get("/:id/comments", async (req, res, next) => {
+  try {
+    // Cerca il post per ID
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).send("Post non trovato");
+    }
+    // Ritorna i commenti del post trovato
+    res.status(200).send(post.comments);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Richiesta GET per ottenere un commento specifico di un post specifico
+postRoute.get("/:id/comments/:commentId", async (req, res, next) => {
+  try {
+    // Cerca il post per ID
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).send("Post non trovato");
+    }
+    // Cerca il commento all'interno del post
+    const comment = post.comments.find(
+      (comment) => comment._id.toString() === req.params.commentId
+    );
+    if (!comment) {
+      return res.status(404).send("Commento non trovato");
+    }
+    // Ritorna il commento trovato
+    res.status(200).send(comment);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Richiesta POST per aggiungere un nuovo commento ad un post specifico
+postRoute.post("/:id/comments", async (req, res, next) => {
+  try {
+    // Cerca il post per ID
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).send("Post non trovato");
+    }
+    // Aggiungi il nuovo commento al post
+    post.comments.push(req.body);
+    // Salva le modifiche al post
+    await post.save();
+    res.status(201).send(post);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Richiesta PUT per modificare un commento di un post specifico
+postRoute.put("/:id/comments/:commentId", async (req, res, next) => {
+  try {
+    // Cerca il post per ID
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).send("Post non trovato");
+    }
+    // Cerca il commento all'interno del post
+    const comment = post.comments.find(
+      (comment) => comment._id.toString() === req.params.commentId
+    );
+    if (!comment) {
+      return res.status(404).send("Commento non trovato");
+    }
+    // Modifica il commento
+    Object.assign(comment, req.body);
+    // Salva le modifiche al post
+    await post.save();
+    res.status(200).send(post);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Richiesta DELETE per eliminare un commento specifico da un post specifico
+postRoute.delete("/:id/comments/:commentId", async (req, res, next) => {
+  try {
+    // Cerca il post per ID
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).send("Post non trovato");
+    }
+    // Trova l'indice del commento all'interno del post
+    const index = post.comments.findIndex(
+      (comment) => comment._id.toString() === req.params.commentId
+    );
+    if (index === -1) {
+      return res.status(404).send("Commento non trovato");
+    }
+    // Elimina il commento dall'array dei commenti
+    post.comments.splice(index, 1);
+    // Salva le modifiche al post
+    await post.save();
+    res.status(204).send();
+  } catch (err) {
     next(err);
   }
 });

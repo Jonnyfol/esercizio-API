@@ -45,6 +45,19 @@ const postSchema = new Schema(
       type: String,
       required: true,
     },
+    // Array dei commenti
+    comments: [
+      {
+        text: {
+          type: String,
+          required: true,
+        },
+        author: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   // Opzioni dello schema
   {
