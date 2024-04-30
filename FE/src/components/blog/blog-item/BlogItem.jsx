@@ -15,7 +15,7 @@ const BlogItem = ({ post }) => {
           </Card.Body>
           <Card.Footer>
             <div>
-              di <span>{post.author.name}</span>
+              di <span>{post.author && post.author.name}</span>
             </div>
           </Card.Footer>
         </Card>

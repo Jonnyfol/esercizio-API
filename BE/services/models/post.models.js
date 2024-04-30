@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import User from "./user.models.js"; // Assicurati che il percorso del file sia corretto
 
 const postSchema = new Schema(
   {
@@ -29,7 +30,6 @@ const postSchema = new Schema(
         required: true,
       },
     },
-    // Autore del post
     author: {
       name: {
         type: String,
@@ -40,6 +40,7 @@ const postSchema = new Schema(
         required: true,
       },
     },
+
     // Contenuto HTML dell'articolo
     content: {
       type: String,
