@@ -26,10 +26,10 @@ const postSchema = new Schema(
       },
       unit: {
         type: String,
-        enum: ["min", "hour", "day"],
         required: true,
       },
     },
+
     author: {
       name: {
         type: String,
@@ -40,13 +40,28 @@ const postSchema = new Schema(
         required: true,
       },
     },
-
     // Contenuto HTML dell'articolo
     content: {
       type: String,
       required: true,
     },
     // Array dei commenti
+    // comments: [
+    //   {
+    //     text: {
+    //       type: String,
+    //       required: true,
+    //     },
+    //     author: {
+    //       author: {
+    //         type: Schema.Types.ObjectId,
+    //         ref: "User",
+    //         required: true,
+    //       },
+    //     },
+    //   },
+    // ],
+
     comments: [
       {
         text: {
@@ -68,3 +83,14 @@ const postSchema = new Schema(
 );
 
 export default model("Post", postSchema);
+
+// author: {
+//   name: {
+//     type: String,
+//     required: true,
+//   },
+//   avatar: {
+//     type: String,
+//     required: true,
+//   },
+// },

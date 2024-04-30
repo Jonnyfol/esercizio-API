@@ -42,6 +42,10 @@ const userSchema = new Schema(
     avatar: {
       type: String,
     },
+    password: {
+      type: String,
+      required: true,
+    },
   },
 
   // Questo ci permette di inserire i documenti che seguono questo schema nella collezione users

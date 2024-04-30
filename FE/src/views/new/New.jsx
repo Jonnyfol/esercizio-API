@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { Container, Form, Button, Alert } from "react-bootstrap";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const NewBlogPost = () => {
   const [formData, setFormData] = useState({
@@ -16,21 +17,43 @@ const NewBlogPost = () => {
 
   const [alert, setAlert] = useState(null);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleQuillChange = (value) => {
     setFormData({
       ...formData,
-      [name]: value,
+      content: value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:3005/posts",
-        formData
-      );
+      const postData = {
+        category: formData.category,
+        title: formData.title,
+        cover: formData.cover,
+        readTime: {
+          value: formData.readTimeValue,
+          unit: formData.readTimeUnit,
+        },
+        author: {
+          name: formData.authorName,
+          avatar: formData.authorAvatar,
+        },
+        content: formData.content,
+      };
+
+      const response = await fetch("http://localhost:3005/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(postData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Errore durante la creazione del post");
+      }
+
       console.log("Dati inviati con successo:", response.data);
       setAlert({ type: "success", message: "Dati inviati con successo!" });
       setFormData({
@@ -45,7 +68,7 @@ const NewBlogPost = () => {
       });
       setTimeout(() => {
         setAlert(null);
-      }, 3000); // Nascondi l'alert dopo 3 secondi
+      }, 3000);
     } catch (error) {
       console.error("Errore durante l'invio dei dati:", error);
       setAlert({
@@ -70,7 +93,9 @@ const NewBlogPost = () => {
               type="text"
               name="category"
               value={formData.category}
-              onChange={handleChange}
+              onChange={(e) =>
+                setFormData({ ...formData, category: e.target.value })
+              }
               required
             />
           </Form.Group>
@@ -81,7 +106,9 @@ const NewBlogPost = () => {
               type="text"
               name="title"
               value={formData.title}
-              onChange={handleChange}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
               required
             />
           </Form.Group>
@@ -92,7 +119,9 @@ const NewBlogPost = () => {
               type="url"
               name="cover"
               value={formData.cover}
-              onChange={handleChange}
+              onChange={(e) =>
+                setFormData({ ...formData, cover: e.target.value })
+              }
               required
             />
           </Form.Group>
@@ -103,7 +132,9 @@ const NewBlogPost = () => {
               type="number"
               name="readTimeValue"
               value={formData.readTimeValue}
-              onChange={handleChange}
+              onChange={(e) =>
+                setFormData({ ...formData, readTimeValue: e.target.value })
+              }
               required
             />
           </Form.Group>
@@ -114,7 +145,9 @@ const NewBlogPost = () => {
               type="text"
               name="authorName"
               value={formData.authorName}
-              onChange={handleChange}
+              onChange={(e) =>
+                setFormData({ ...formData, authorName: e.target.value })
+              }
               required
             />
           </Form.Group>
@@ -125,19 +158,19 @@ const NewBlogPost = () => {
               type="url"
               name="authorAvatar"
               value={formData.authorAvatar}
-              onChange={handleChange}
+              onChange={(e) =>
+                setFormData({ ...formData, authorAvatar: e.target.value })
+              }
               required
             />
           </Form.Group>
 
           <Form.Group controlId="formContent">
             <Form.Label>Contenuto HTML dell'articolo</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={6}
-              name="content"
+            <ReactQuill
+              theme="snow"
               value={formData.content}
-              onChange={handleChange}
+              onChange={handleQuillChange}
               required
             />
           </Form.Group>

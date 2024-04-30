@@ -102,3 +102,22 @@ authorRoute.get("/:id", async (req, res, next) => {
     next(err);
   }
 });
+
+authorRoute.post("/", async (req, res, next) => {
+  try {
+    let user = await User.create({
+      ...req.body,
+      password: await bcrypt.hash(req.body.password, 10),
+    });
+    // const msg = {
+    //   to: req.body.email, // Change to your recipient
+    //   from: "...", // Change to your verified sender
+    //   subject: "Benvenuto su Strive Blog",
+    //   html: `Hai creato un account su Strive Blog`,
+    // }
+    // await sgMail.send(msg)
+    res.send(user);
+  } catch (error) {
+    next(error);
+  }
+});
