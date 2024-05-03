@@ -4,9 +4,11 @@ import { Button, Form, ListGroup, Row, Col } from "react-bootstrap";
 const CommentSection = ({ postId }) => {
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState([]);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     fetchComments();
+    setUser(JSON.parse(atob(localStorage.getItem("token").split(".")[1])));
   }, []);
 
   const fetchComments = async () => {
@@ -33,8 +35,9 @@ const CommentSection = ({ postId }) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({ text: commentText, author: "Nome Autore" }),
+          body: JSON.stringify({ text: commentText, author: user.username }), // Inserisci il nome dell'autore del commento
         }
       );
       if (response.ok) {
@@ -49,19 +52,26 @@ const CommentSection = ({ postId }) => {
     }
   };
 
-  const handleDeleteComment = async (commentId) => {
+  const handleDeleteComment = async (commentId, commentAuthor) => {
     try {
-      const response = await fetch(
-        `http://localhost:3005/posts/${postId}/comments/${commentId}`,
-        {
-          method: "DELETE",
+      if (user.username === commentAuthor) {
+        const response = await fetch(
+          `http://localhost:3005/posts/${postId}/comments/${commentId}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        if (response.ok) {
+          console.log("Commento eliminato con successo");
+          fetchComments();
+        } else {
+          console.log("Errore durante l'eliminazione del commento");
         }
-      );
-      if (response.ok) {
-        console.log("Commento eliminato con successo");
-        fetchComments();
       } else {
-        console.log("Errore durante l'eliminazione del commento");
+        console.log("Non sei autorizzato a eliminare questo commento");
       }
     } catch (error) {
       console.error("Errore durante l'eliminazione del commento:", error);
@@ -87,13 +97,18 @@ const CommentSection = ({ postId }) => {
           <ListGroup.Item key={comment._id}>
             <Row>
               <Col>{comment.text}</Col>
+              <Col>{comment.author}</Col> {/* Visualizza il nome dell'autore */}
               <Col xs="auto">
-                <Button
-                  variant="danger"
-                  onClick={() => handleDeleteComment(comment._id)}
-                >
-                  Elimina
-                </Button>
+                {user.username === comment.author && (
+                  <Button
+                    variant="danger"
+                    onClick={() =>
+                      handleDeleteComment(comment._id, comment.author)
+                    }
+                  >
+                    Elimina
+                  </Button>
+                )}
               </Col>
             </Row>
           </ListGroup.Item>

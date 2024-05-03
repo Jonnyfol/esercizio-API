@@ -1,6 +1,8 @@
 import { Router } from "express";
 import Post from "../models/post.models.js";
 import { avatarmulter } from "../middlewares/multer.js";
+import bcrypt from "bcryptjs";
+import { authMiddleware, generateJWT } from "../auth/index.js";
 
 // Creiamo un nuovo Router e esportiamolo per essere utilizzato altrove
 export const postRoute = Router();
@@ -201,5 +203,21 @@ postRoute.delete("/:id/comments/:commentId", async (req, res, next) => {
     res.status(204).send();
   } catch (err) {
     next(err);
+  }
+});
+
+postRoute.post("/", authMiddleware, async (req, res, next) => {
+  try {
+    let post = await Post.create({ ...req.body, author: req.user._id });
+    const msg = {
+      to: req.body.email, // Change to your recipient
+      from: "...", // Change to your verified sender
+      subject: "Grazie per aver postato su Strive Blog",
+      html: `Hai postato un articolo "${req.body.title}" su Strive Blog.`,
+    };
+    await sgMail.send(msg);
+    res.send(post);
+  } catch (error) {
+    next(error);
   }
 });

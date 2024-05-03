@@ -25,13 +25,6 @@ const AuthorList = () => {
 
   return (
     <div>
-      <Link to="/new-author">
-        {" "}
-        {/* Aggiungi il tasto per navigare alla pagina di inserimento */}
-        <Button variant="primary" className="mb-3">
-          Iscriviti per pubblicare il tuo post
-        </Button>
-      </Link>
       {authors.map((author) => (
         <Card key={author._id} className="mb-3">
           <Card.Body>

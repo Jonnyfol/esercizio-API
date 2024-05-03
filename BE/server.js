@@ -1,3 +1,4 @@
+// Import dei moduli necessari
 import express from "express";
 import { config } from "dotenv";
 import mongoose from "mongoose";
@@ -10,26 +11,24 @@ import {
   notfoundHandler,
   unauthorizedHandler,
 } from "./errorHandlers.js";
+import { loginRoute } from "./services/routes/login.route.js";
+import { authMiddleware } from "./services/auth/index.js";
 
-// Inizializza la gestione dei file .env
 config();
-
-// Crea una porta
+// Creazione della porta del server
 const PORT = process.env.PORT || 3005;
-
-// Crea il server
 const app = express();
+// Middleware per consentire la comunicazione con dati JSON e CORS
 
-// Abilita la comunicazione con dati JSON
+app.use(cors());
 app.use(express.json());
 
-// cors
-app.use(cors());
-
+// Configurazione delle route
+app.use("/", loginRoute);
 app.use("/authors", authorRoute);
-
 app.use("/posts", postRoute);
 
+// Gestione degli errori
 app.use(badRequestHandler);
 app.use(unauthorizedHandler);
 app.use(notfoundHandler);
@@ -38,20 +37,15 @@ app.use(genericErrorHandler);
 // Funzione per inizializzare il server
 const initServer = async () => {
   try {
-    // Aspettiamo di connetterci al database
     await mongoose.connect(process.env.DBURL);
-
-    // Connessi al database
-    console.log("Connesso al database");
-
-    // Abilita server
     app.listen(PORT, () => {
-      console.log(`Il nostro server sta ascoltando alla porta ${PORT}`);
+      console.log(`Server is listening at port: ${PORT}`);
     });
   } catch (err) {
+    // Gestione degli errori durante la connessione al database
     console.error("Connessione al database fallita!", err);
   }
 };
 
-// Invochiamo la funzione per inizializzare il server
+// Inizializzazione del server
 initServer();

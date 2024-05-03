@@ -2,6 +2,8 @@ import { Router } from "express";
 import User from "../models/user.models.js";
 import { v2 as cloudinary } from "cloudinary";
 import { avatarmulter } from "../middlewares/multer.js";
+import bcrypt from "bcryptjs";
+import { authMiddleware, generateJWT } from "../auth/index.js";
 
 // Creiamo un nuovo Router e esportiamolo per essere utilizzato altrove
 export const authorRoute = Router();
@@ -103,21 +105,14 @@ authorRoute.get("/:id", async (req, res, next) => {
   }
 });
 
-authorRoute.post("/", async (req, res, next) => {
+// Endpoint in cui l'autenticazione è necessaria
+authorRoute.get("/profile", authMiddleware, async (req, res, next) => {
+  // Utilizzando il middleware authMiddleware, l'oggetto  req avrà il parametro user popolato con i dati presi dal database
   try {
-    let user = await User.create({
-      ...req.body,
-      password: await bcrypt.hash(req.body.password, 10),
-    });
-    // const msg = {
-    //   to: req.body.email, // Change to your recipient
-    //   from: "...", // Change to your verified sender
-    //   subject: "Benvenuto su Strive Blog",
-    //   html: `Hai creato un account su Strive Blog`,
-    // }
-    // await sgMail.send(msg)
+    let user = await User.findById(req.user.id);
+
     res.send(user);
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 });

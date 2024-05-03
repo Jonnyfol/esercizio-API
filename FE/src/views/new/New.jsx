@@ -10,8 +10,6 @@ const NewBlogPost = () => {
     cover: "",
     readTimeValue: "",
     readTimeUnit: "min",
-    authorName: "",
-    authorAvatar: "",
     content: "",
   });
 
@@ -35,10 +33,6 @@ const NewBlogPost = () => {
           value: formData.readTimeValue,
           unit: formData.readTimeUnit,
         },
-        author: {
-          name: formData.authorName,
-          avatar: formData.authorAvatar,
-        },
         content: formData.content,
       };
 
@@ -46,6 +40,7 @@ const NewBlogPost = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(postData),
       });
@@ -62,8 +57,6 @@ const NewBlogPost = () => {
         cover: "",
         readTimeValue: "",
         readTimeUnit: "min",
-        authorName: "",
-        authorAvatar: "",
         content: "",
       });
       setTimeout(() => {
@@ -139,32 +132,6 @@ const NewBlogPost = () => {
             />
           </Form.Group>
 
-          <Form.Group controlId="formAuthorName">
-            <Form.Label>Nome dell'autore</Form.Label>
-            <Form.Control
-              type="text"
-              name="authorName"
-              value={formData.authorName}
-              onChange={(e) =>
-                setFormData({ ...formData, authorName: e.target.value })
-              }
-              required
-            />
-          </Form.Group>
-
-          <Form.Group controlId="formAuthorAvatar">
-            <Form.Label>Link dell'avatar dell'autore</Form.Label>
-            <Form.Control
-              type="url"
-              name="authorAvatar"
-              value={formData.authorAvatar}
-              onChange={(e) =>
-                setFormData({ ...formData, authorAvatar: e.target.value })
-              }
-              required
-            />
-          </Form.Group>
-
           <Form.Group controlId="formContent">
             <Form.Label>Contenuto HTML dell'articolo</Form.Label>
             <ReactQuill
@@ -188,8 +155,6 @@ const NewBlogPost = () => {
                 cover: "",
                 readTimeValue: "",
                 readTimeUnit: "min",
-                authorName: "",
-                authorAvatar: "",
                 content: "",
               })
             }
