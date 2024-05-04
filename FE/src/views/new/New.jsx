@@ -3,13 +3,14 @@ import { Container, Form, Button, Alert } from "react-bootstrap";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-const NewBlogPost = () => {
+const NewBlogPost = ({ postId }) => {
   const [formData, setFormData] = useState({
     category: "",
     title: "",
     cover: "",
     readTimeValue: "",
     readTimeUnit: "min",
+
     content: "",
   });
 
@@ -32,6 +33,10 @@ const NewBlogPost = () => {
         readTime: {
           value: formData.readTimeValue,
           unit: formData.readTimeUnit,
+        },
+        author: {
+          name: localStorage.getItem("username"),
+          avatar: localStorage.getItem("avatar"),
         },
         content: formData.content,
       };
@@ -57,6 +62,7 @@ const NewBlogPost = () => {
         cover: "",
         readTimeValue: "",
         readTimeUnit: "min",
+
         content: "",
       });
       setTimeout(() => {
@@ -73,6 +79,26 @@ const NewBlogPost = () => {
 
   const handleAlertDismiss = () => {
     setAlert(null);
+  };
+
+  const handleDeletePost = async () => {
+    try {
+      const response = await fetch(`http://localhost:3005/posts/${postId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (response.ok) {
+        console.log("Post eliminato con successo");
+        // Aggiorna lo stato dell'app o esegui altre operazioni necessarie dopo l'eliminazione del post
+      } else {
+        console.log("Errore durante l'eliminazione del post");
+      }
+    } catch (error) {
+      console.error("Errore durante l'eliminazione del post:", error);
+    }
   };
 
   return (

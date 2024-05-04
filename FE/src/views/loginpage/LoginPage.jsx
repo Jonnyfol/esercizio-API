@@ -44,6 +44,10 @@ const LoginPage = () => {
 
       // Salva il token nel localStorage dopo il login
       localStorage.setItem("token", data.token);
+      localStorage.setItem("avatar", data.user.avatar);
+      localStorage.setItem("username", data.user.username);
+      localStorage.setItem("userId", data.user.userId);
+      console.log(data);
 
       // Reindirizza alla pagina Home dopo il login
       navigate("/");
