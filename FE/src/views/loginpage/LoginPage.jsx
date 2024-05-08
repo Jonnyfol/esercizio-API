@@ -47,7 +47,8 @@ const LoginPage = () => {
       localStorage.setItem("avatar", data.user.avatar);
       localStorage.setItem("username", data.user.username);
       localStorage.setItem("userId", data.user.userId);
-      console.log(data);
+
+      //sicurezza userId va bene??
 
       // Reindirizza alla pagina Home dopo il login
       navigate("/");

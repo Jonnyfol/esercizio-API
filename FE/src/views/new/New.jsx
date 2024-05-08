@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Alert } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { Link } from "react-router-dom";
 
 const NewBlogPost = ({ postId }) => {
   const [formData, setFormData] = useState({
@@ -10,7 +12,6 @@ const NewBlogPost = ({ postId }) => {
     cover: "",
     readTimeValue: "",
     readTimeUnit: "min",
-
     content: "",
   });
 
@@ -188,7 +189,7 @@ const NewBlogPost = ({ postId }) => {
             Cancella
           </Button>
         </Form>
-        <Button variant="outline-primary" className="mt-2" href="/">
+        <Button variant="outline-primary" className="mt-2" as={Link} to="/">
           Torna alla Home
         </Button>
       </div>

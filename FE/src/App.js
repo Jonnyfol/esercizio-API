@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, createContext } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -13,8 +13,14 @@ import NewBlogPost from "./views/new/New";
 import NewAuthor from "./views/NewAuthor/NewAuthor";
 import LoginPage from "./views/loginpage/LoginPage";
 
+// Crea il contesto per il token di autenticazione
+export const AuthContext = createContext();
+
 function App() {
   const [author, setAuthor] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem("token")
+  );
 
   const getAuthors = async () => {
     try {
@@ -34,34 +40,29 @@ function App() {
     getAuthors();
   }, []);
 
-  // Controlla se l'utente è già autenticato tramite il token nel localStorage
-  const isAuthenticated = localStorage.getItem("token");
-
   return (
-    <Router>
-      <NavBar />
-      <Routes>
-        {/* Se l'utente non è autenticato, reindirizzalo alla pagina di login */}
-        {!isAuthenticated && (
-          <Route path="/" element={<Navigate to="/login" />} />
-        )}
-        <Route path="/login" element={<LoginPage />} /> {/* Pagina di login */}
-        {/* Rotte accessibili solo dopo l'accesso */}
-        {isAuthenticated && (
-          <>
-            {/* Reindirizza alla pagina NewAuthor se non ci sono autori */}
-            {!author && (
-              <Route path="/" element={<Navigate to="/new-author" />} />
-            )}
-            <Route path="/" element={<Home />} />
-            <Route path="/blog/:id" element={<Blog />} />
-            <Route path="/new" element={<NewBlogPost />} />
-            <Route path="/new-author" element={<NewAuthor />} />
-          </>
-        )}
-      </Routes>
-      <Footer />
-    </Router>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+      <Router>
+        <NavBar />
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          {isAuthenticated ? (
+            <>
+              {!author && (
+                <Route path="/" element={<Navigate to="/new-author" />} />
+              )}
+              <Route path="/" element={<Home />} />
+              <Route path="/blog/:id" element={<Blog />} />
+              <Route path="/new" element={<NewBlogPost />} />
+              <Route path="/new-author" element={<NewAuthor />} />
+            </>
+          ) : (
+            <Navigate to="/login" />
+          )}
+        </Routes>
+        <Footer />
+      </Router>
+    </AuthContext.Provider>
   );
 }
 

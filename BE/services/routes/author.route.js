@@ -116,3 +116,22 @@ authorRoute.get("/profile", authMiddleware, async (req, res, next) => {
     next(err);
   }
 });
+
+// Richiesta GET per ottenere l'utente collegato al token d'accesso
+authorRoute.get("/me", authMiddleware, async (req, res, next) => {
+  try {
+    // Utilizzando il middleware authMiddleware, l'oggetto req avrà il parametro user popolato con i dati presi dal database
+    let user = await User.findById(req.user.id);
+
+    // Se l'utente non viene trovato, restituisci uno status 404 (Not Found)
+    if (!user) {
+      return res.status(404).send("Utente non trovato");
+    }
+
+    // Mandiamo in risposta l'utente trovato e uno status code di 200 (OK)
+    res.status(200).send(user);
+  } catch (err) {
+    // In caso di errore, procediamo
+    next(err);
+  }
+});

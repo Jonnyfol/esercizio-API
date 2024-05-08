@@ -5,6 +5,8 @@ import BlogAuthor from "../../components/blog/blog-author/BlogAuthor";
 import BlogLike from "../../components/likes/BlogLike";
 import CommentSection from "../../components/blog/comment-section/CommentSection";
 import "./styles.css";
+import { Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const Blog = () => {
   const [blog, setBlog] = useState({});
@@ -61,6 +63,9 @@ const Blog = () => {
             }}
           ></div>
           <CommentSection postId={blog._id} />{" "}
+          <Button variant="outline-primary" className="mt-2" as={Link} to="/">
+            Torna alla Home
+          </Button>
         </Container>
       </div>
     );
