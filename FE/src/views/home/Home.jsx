@@ -1,13 +1,24 @@
 import React from "react";
-import { Container, Col, Row } from "react-bootstrap";
+import { Container, Col, Row, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import BlogList from "../../components/blog/blog-list/BlogList";
 import AuthorList from "../../components/blog/blog-author/AuthorList";
 import "./styles.css";
 
 const Home = (props) => {
+  const handleLogout = () => {
+    // Rimuovi il token dal localStorage
+    localStorage.removeItem("token");
+  };
+
   return (
     <Container fluid="sm">
-      <h1 className="blog-main-title mb-3">Benvenuto sullo Strive Blog!</h1>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h1 className="blog-main-title">Benvenuto sullo Strive Blog!</h1>
+        <Button variant="danger" as={Link} to="/login" onClick={handleLogout}>
+          Logout
+        </Button>
+      </div>
       <Row>
         <Col xs={9}>
           <BlogList />

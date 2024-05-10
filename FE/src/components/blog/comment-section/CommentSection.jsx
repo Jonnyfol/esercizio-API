@@ -5,6 +5,8 @@ const CommentSection = ({ postId }) => {
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState([]);
   const [user, setUser] = useState(null);
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editedCommentText, setEditedCommentText] = useState("");
 
   useEffect(() => {
     fetchComments();
@@ -78,6 +80,32 @@ const CommentSection = ({ postId }) => {
     }
   };
 
+  const handleEditComment = async (commentId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3005/posts/${postId}/comments/${commentId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ text: editedCommentText }), // Aggiorna il testo del commento
+        }
+      );
+      if (response.ok) {
+        console.log("Commento modificato con successo");
+        fetchComments();
+        setEditingCommentId(null);
+        setEditedCommentText("");
+      } else {
+        console.log("Errore durante la modifica del commento");
+      }
+    } catch (error) {
+      console.error("Errore durante la modifica del commento:", error);
+    }
+  };
+
   return (
     <div>
       <Form.Group controlId="commentText">
@@ -95,22 +123,56 @@ const CommentSection = ({ postId }) => {
       <ListGroup className="mt-3">
         {comments.map((comment) => (
           <ListGroup.Item key={comment._id}>
-            <Row>
-              <Col>{comment.text}</Col>
-              <Col>{comment.author}</Col> {/* Visualizza il nome dell'autore */}
-              <Col xs="auto">
-                {user.username === comment.author && (
+            {editingCommentId === comment._id ? (
+              <Row>
+                <Col>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    value={editedCommentText}
+                    onChange={(e) => setEditedCommentText(e.target.value)}
+                  />
+                </Col>
+                <Col>
                   <Button
-                    variant="danger"
-                    onClick={() =>
-                      handleDeleteComment(comment._id, comment.author)
-                    }
+                    variant="success"
+                    onClick={() => handleEditComment(comment._id)}
                   >
-                    Elimina
+                    Salva
                   </Button>
-                )}
-              </Col>
-            </Row>
+                </Col>
+              </Row>
+            ) : (
+              <Row>
+                <Col>{comment.text}</Col>
+                <Col>{comment.author}</Col>{" "}
+                {/* Visualizza il nome dell'autore */}
+                <Col xs="auto">
+                  {user.username === comment.author && (
+                    <>
+                      <Button
+                        variant="danger"
+                        className="mr-2"
+                        onClick={() =>
+                          handleDeleteComment(comment._id, comment.author)
+                        }
+                      >
+                        Elimina
+                      </Button>
+                      <Button
+                        variant="info"
+                        onClick={() => {
+                          setEditingCommentId(comment._id);
+                          setEditedCommentText(comment.text);
+                        }}
+                      >
+                        Modifica
+                      </Button>
+                    </>
+                  )}
+                </Col>
+              </Row>
+            )}
           </ListGroup.Item>
         ))}
       </ListGroup>

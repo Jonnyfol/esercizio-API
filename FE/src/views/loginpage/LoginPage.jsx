@@ -21,13 +21,10 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Verifica che entrambi i campi username e password siano compilati
       if (!credentials.username || !credentials.password) {
-        setError("Username e password sono richiesti.");
-        return;
+        throw new Error("Username e password sono richiesti.");
       }
 
-      // Esegui la richiesta di login al backend
       const response = await fetch("http://localhost:3005/login", {
         method: "POST",
         headers: {
@@ -42,15 +39,11 @@ const LoginPage = () => {
         throw new Error(data.message || "Errore durante il login.");
       }
 
-      // Salva il token nel localStorage dopo il login
       localStorage.setItem("token", data.token);
       localStorage.setItem("avatar", data.user.avatar);
       localStorage.setItem("username", data.user.username);
       localStorage.setItem("userId", data.user.userId);
 
-      //sicurezza userId va bene??
-
-      // Reindirizza alla pagina Home dopo il login
       navigate("/");
     } catch (error) {
       setError(error.message);
