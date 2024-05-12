@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import GoogleAuth from "../../components/googleAuth/GoogleAuth";
 
 const LoginPage = () => {
   const [credentials, setCredentials] = useState({
@@ -21,8 +22,10 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Verifica che entrambi i campi username e password siano compilati
       if (!credentials.username || !credentials.password) {
-        throw new Error("Username e password sono richiesti.");
+        setError("Username e password sono richiesti.");
+        return;
       }
 
       const response = await fetch("http://localhost:3005/login", {
@@ -83,6 +86,7 @@ const LoginPage = () => {
         <Button variant="outline-primary" className="mt-2" href="/new-author">
           Iscriviti
         </Button>
+        <GoogleAuth />
       </Form>
     </Container>
   );

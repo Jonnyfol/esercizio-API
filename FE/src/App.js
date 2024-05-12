@@ -12,6 +12,7 @@ import Blog from "./views/blog/Blog";
 import NewBlogPost from "./views/new/New";
 import NewAuthor from "./views/NewAuthor/NewAuthor";
 import LoginPage from "./views/loginpage/LoginPage";
+import Welcome from "./components/welcome/Welcome";
 
 // Crea il contesto per il token di autenticazione
 export const AuthContext = createContext();
@@ -22,9 +23,20 @@ function App() {
     !!localStorage.getItem("token")
   );
 
+  useEffect(() => {
+    // Recupera gli autori solo se l'utente è autenticato
+    if (isAuthenticated) {
+      getAuthors();
+    }
+  }, [isAuthenticated]);
+
   const getAuthors = async () => {
     try {
-      const response = await fetch("http://localhost:3005/authors");
+      const response = await fetch("http://localhost:3005/authors", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       if (response.ok) {
         const authors = await response.json();
         setAuthor(authors);
@@ -36,29 +48,42 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    getAuthors();
-  }, []);
+  // Funzione per il login
+  const handleLogin = (token) => {
+    localStorage.setItem("token", token);
+    setIsAuthenticated(true);
+  };
+
+  // Funzione per il logout
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("avatar");
+    localStorage.removeItem("username");
+    localStorage.removeItem("userId");
+    setIsAuthenticated(false);
+  };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, setIsAuthenticated, handleLogin, handleLogout }}
+    >
       <Router>
         <NavBar />
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          {isAuthenticated ? (
-            <>
-              {!author && (
-                <Route path="/" element={<Navigate to="/new-author" />} />
-              )}
-              <Route path="/" element={<Home />} />
-              <Route path="/blog/:id" element={<Blog />} />
-              <Route path="/new" element={<NewBlogPost />} />
-              <Route path="/new-author" element={<NewAuthor />} />
-            </>
-          ) : (
-            <Navigate to="/login" />
-          )}
+
+          <Route path="/welcome" element={<Welcome />} />
+
+          <Route
+            path="/"
+            element={isAuthenticated ? <Home /> : <Navigate to="/login" />}
+          />
+
+          <Route path="/blog/:id" element={<Blog />} />
+          <Route path="/new" element={<NewBlogPost />} />
+          <Route path="/new-author" element={<NewAuthor />} />
+
+          <Route path="/*" element={<h1>404 Page Not Found</h1>} />
         </Routes>
         <Footer />
       </Router>

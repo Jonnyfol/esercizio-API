@@ -4,9 +4,30 @@ import { v2 as cloudinary } from "cloudinary";
 import { avatarmulter } from "../middlewares/multer.js";
 import bcrypt from "bcryptjs";
 import { authMiddleware, generateJWT } from "../auth/index.js";
+import passport from "passport";
 
 // Creiamo un nuovo Router e esportiamolo per essere utilizzato altrove
 export const authorRoute = Router();
+
+// Route per l'autenticazione con Google
+authorRoute.get(
+  "/googleLogin",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+authorRoute.get(
+  "/callback",
+  passport.authenticate("google", { session: false }),
+  (req, res, next) => {
+    try {
+      res.redirect(
+        `http://localhost:3000/welcome?accessToken=${req.user.accToken}`
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 // Richiesta POST all'indirizzo "/authors"
 authorRoute.post("/", async (req, res, next) => {

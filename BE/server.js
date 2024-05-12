@@ -13,6 +13,8 @@ import {
 } from "./errorHandlers.js";
 import { loginRoute } from "./services/routes/login.route.js";
 import { authMiddleware } from "./services/auth/index.js";
+import passport from "passport";
+import googleStrategy from "./services/config/passport.js";
 
 config();
 // Creazione della porta del server
@@ -22,10 +24,11 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+passport.use("google", googleStrategy);
 
 // Configurazione delle route
-app.use("/", loginRoute);
 app.use("/authors", authorRoute);
+app.use("/", loginRoute);
 app.use("/posts", postRoute);
 
 // Gestione degli errori

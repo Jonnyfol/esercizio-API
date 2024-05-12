@@ -36,20 +36,25 @@ const userSchema = new Schema(
     // L'età deve essere un numero, obbligatorio, dal valore minimo di 1 e massimo di 80
     bornDate: {
       type: String,
-      required: true,
+      required: false,
     },
 
     avatar: {
       type: String,
+      required: false,
     },
 
     username: {
       type: String,
-      required: true,
+      required: false,
     },
     password: {
       type: String,
-      required: true,
+      required: false,
+    },
+    googleId: {
+      type: String,
+      required: false,
     },
   },
 

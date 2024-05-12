@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import User from "./user.models.js"; // Assicurati che il percorso del file sia corretto
+import User from "./user.models.js";
 
 const postSchema = new Schema(
   {
