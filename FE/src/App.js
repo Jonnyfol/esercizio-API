@@ -64,24 +64,26 @@ function App() {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, setIsAuthenticated, handleLogin, handleLogout }}
+    >
       <Router>
         <NavBar />
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          {isAuthenticated ? (
-            <>
-              {!author && (
-                <Route path="/" element={<Navigate to="/new-author" />} />
-              )}
-              <Route path="/" element={<Home />} />
-              <Route path="/blog/:id" element={<Blog />} />
-              <Route path="/new" element={<NewBlogPost />} />
-              <Route path="/new-author" element={<NewAuthor />} />
-            </>
-          ) : (
-            <Navigate to="/login" />
-          )}
+
+          <Route path="/welcome" element={<Welcome />} />
+
+          <Route
+            path="/"
+            element={isAuthenticated ? <Home /> : <Navigate to="/login" />}
+          />
+
+          <Route path="/blog/:id" element={<Blog />} />
+          <Route path="/new" element={<NewBlogPost />} />
+          <Route path="/new-author" element={<NewAuthor />} />
+
+          <Route path="/*" element={<h1>404 Page Not Found</h1>} />
         </Routes>
         <Footer />
       </Router>
