@@ -44,7 +44,6 @@ const LoginPage = () => {
         throw new Error(data.message || "Errore durante il login.");
       }
 
-      // Aggiorna il contesto con il token e l'ID dell'autore
       setToken(data.token);
       setAuthorId(data.authorId);
 
