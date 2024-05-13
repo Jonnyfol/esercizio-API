@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -13,15 +13,11 @@ import NewBlogPost from "./views/new/New";
 import NewAuthor from "./views/NewAuthor/NewAuthor";
 import LoginPage from "./views/loginpage/LoginPage";
 import Welcome from "./components/welcome/Welcome";
-
-// Crea il contesto per il token di autenticazione
-export const AuthContext = createContext();
+import { AuthContext } from "./components/context/token";
 
 function App() {
+  const { isAuthenticated } = useContext(AuthContext);
   const [author, setAuthor] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    !!localStorage.getItem("token")
-  );
 
   useEffect(() => {
     // Recupera gli autori solo se l'utente è autenticato
@@ -48,46 +44,25 @@ function App() {
     }
   };
 
-  // Funzione per il login
-  const handleLogin = (token) => {
-    localStorage.setItem("token", token);
-    setIsAuthenticated(true);
-  };
-
-  // Funzione per il logout
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("avatar");
-    localStorage.removeItem("username");
-    localStorage.removeItem("userId");
-    setIsAuthenticated(false);
-  };
-
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, setIsAuthenticated, handleLogin, handleLogout }}
-    >
-      <Router>
-        <NavBar />
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-
-          <Route path="/welcome" element={<Welcome />} />
-
-          <Route
-            path="/"
-            element={isAuthenticated ? <Home /> : <Navigate to="/login" />}
-          />
-
-          <Route path="/blog/:id" element={<Blog />} />
-          <Route path="/new" element={<NewBlogPost />} />
-          <Route path="/new-author" element={<NewAuthor />} />
-
-          <Route path="/*" element={<h1>404 Page Not Found</h1>} />
-        </Routes>
-        <Footer />
-      </Router>
-    </AuthContext.Provider>
+    <Router>
+      <NavBar />
+      <Routes>
+        <Route path="/new-author" element={<NewAuthor />} />
+        <Route path="/welcome" element={<Welcome />} />
+        <Route
+          path="/"
+          element={isAuthenticated ? <Home /> : <Navigate to="/new-author" />}
+        />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/blog/:id" element={<Blog />} />
+        <Route path="/new" element={<NewBlogPost />} />
+        <Route path="/new-author" element={<NewAuthor />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/*" element={<h1>404 Page Not Found</h1>} />
+      </Routes>
+      <Footer />
+    </Router>
   );
 }
 

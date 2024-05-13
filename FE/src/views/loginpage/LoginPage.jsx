@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Container, Form, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import GoogleAuth from "../../components/googleAuth/GoogleAuth";
+import { AuthContext } from "../../components/context/token";
 
 const LoginPage = () => {
   const [credentials, setCredentials] = useState({
@@ -9,6 +10,7 @@ const LoginPage = () => {
     password: "",
   });
   const [error, setError] = useState(null);
+  const { setToken, setAuthorId } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -42,10 +44,9 @@ const LoginPage = () => {
         throw new Error(data.message || "Errore durante il login.");
       }
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("avatar", data.user.avatar);
-      localStorage.setItem("username", data.user.username);
-      localStorage.setItem("userId", data.user.userId);
+      // Aggiorna il contesto con il token e l'ID dell'autore
+      setToken(data.token);
+      setAuthorId(data.authorId);
 
       navigate("/");
     } catch (error) {

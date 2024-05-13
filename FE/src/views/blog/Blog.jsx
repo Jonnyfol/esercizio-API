@@ -52,9 +52,6 @@ const Blog = () => {
             <div className="blog-details-info">
               <div>{blog.createdAt}</div>
               <div>{`Lettura in ${blog.readTime.value} ${blog.readTime.unit}`}</div>
-              <div style={{ marginTop: 20 }}>
-                <BlogLike defaultLikes={["123"]} onChange={console.log} />
-              </div>
             </div>
           </div>
           <div
