@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Container, Form, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../components/context/token";
 
 const NewBlogPost = ({ postId }) => {
   const [formData, setFormData] = useState({
@@ -16,6 +17,7 @@ const NewBlogPost = ({ postId }) => {
   });
 
   const [alert, setAlert] = useState(null);
+  const { token } = useContext(AuthContext);
 
   const handleQuillChange = (value) => {
     setFormData({
@@ -37,7 +39,6 @@ const NewBlogPost = ({ postId }) => {
         },
         author: {
           name: localStorage.getItem("username"),
-          avatar: localStorage.getItem("avatar"),
         },
         content: formData.content,
       };
@@ -46,7 +47,7 @@ const NewBlogPost = ({ postId }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(postData),
       });
@@ -192,17 +193,18 @@ const NewBlogPost = ({ postId }) => {
         <Button variant="outline-primary" className="mt-2" as={Link} to="/">
           Torna alla Home
         </Button>
+
+        {alert && (
+          <Alert
+            variant={alert.type}
+            onClose={handleAlertDismiss}
+            dismissible
+            className="mt-3"
+          >
+            {alert.message}
+          </Alert>
+        )}
       </div>
-      {alert && (
-        <Alert
-          variant={alert.type}
-          onClose={handleAlertDismiss}
-          dismissible
-          className="mt-3"
-        >
-          {alert.message}
-        </Alert>
-      )}
     </Container>
   );
 };
