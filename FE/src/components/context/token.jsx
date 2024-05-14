@@ -1,19 +1,20 @@
 import React, { createContext, useState, useEffect } from "react";
-//
 
 export const AuthContext = createContext(null);
 
 export default function AuthContextProvider({ children }) {
-  // Inizializza lo stato del token e dell'ID dell'autore dal localStorage
+  // Inizializza lo stato del token, dell'ID dell'autore, del nome dell'autore e dell'avatar
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [authorId, setAuthorId] = useState(
     localStorage.getItem("authorId") || ""
   );
+  const [username, setusername] = useState(
+    localStorage.getItem("username") || ""
+  );
+  const [avatar, setavatar] = useState(localStorage.getItem("avatar") || "");
 
-  // Verifica se l'utente è autenticato in base alla presenza del token
   const isAuthenticated = !!token;
 
-  // Effetto per salvare il token e l'ID dell'autore nel localStorage quando cambiano
   useEffect(() => {
     localStorage.setItem("token", token);
   }, [token]);
@@ -22,8 +23,26 @@ export default function AuthContextProvider({ children }) {
     localStorage.setItem("authorId", authorId);
   }, [authorId]);
 
+  useEffect(() => {
+    localStorage.setItem("username", username);
+  }, [username]);
+
+  useEffect(() => {
+    localStorage.setItem("avatar", avatar);
+  }, [avatar]);
+
   // Crea l'oggetto di valore del contesto
-  const value = { token, setToken, authorId, setAuthorId, isAuthenticated };
+  const value = {
+    token,
+    setToken,
+    authorId,
+    setAuthorId,
+    username,
+    setusername,
+    avatar,
+    setavatar,
+    isAuthenticated,
+  };
 
   // Fornisce il contesto ai componenti figli
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

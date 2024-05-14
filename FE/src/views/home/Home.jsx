@@ -9,6 +9,9 @@ const Home = (props) => {
   const handleLogout = () => {
     // Rimuovi il token dal localStorage
     localStorage.removeItem("token");
+    // localStorage.removeItem("username");
+    // localStorage.removeItem("avatar");
+    // localStorage.removeItem("authorId");
   };
 
   return (

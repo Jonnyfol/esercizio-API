@@ -10,7 +10,8 @@ const LoginPage = () => {
     password: "",
   });
   const [error, setError] = useState(null);
-  const { setToken, setAuthorId } = useContext(AuthContext);
+  const { setToken, setAuthorId, setusername, setavatar } =
+    useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -46,6 +47,8 @@ const LoginPage = () => {
 
       setToken(data.token);
       setAuthorId(data.authorId);
+      setusername(data.username);
+      setavatar(data.avatar);
 
       navigate("/");
     } catch (error) {

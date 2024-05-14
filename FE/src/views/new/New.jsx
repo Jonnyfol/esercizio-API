@@ -17,7 +17,7 @@ const NewBlogPost = ({ postId }) => {
   });
 
   const [alert, setAlert] = useState(null);
-  const { token } = useContext(AuthContext);
+  const { token, username, avatar } = useContext(AuthContext);
 
   const handleQuillChange = (value) => {
     setFormData({
@@ -38,7 +38,8 @@ const NewBlogPost = ({ postId }) => {
           unit: formData.readTimeUnit,
         },
         author: {
-          name: localStorage.getItem("username"),
+          name: username,
+          avatar: avatar,
         },
         content: formData.content,
       };
@@ -47,7 +48,7 @@ const NewBlogPost = ({ postId }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(postData),
       });
@@ -88,7 +89,7 @@ const NewBlogPost = ({ postId }) => {
       const response = await fetch(`http://localhost:3005/posts/${postId}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
