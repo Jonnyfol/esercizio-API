@@ -48,7 +48,7 @@ const NewBlogPost = ({ postId }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(postData),
       });
@@ -95,7 +95,6 @@ const NewBlogPost = ({ postId }) => {
 
       if (response.ok) {
         console.log("Post eliminato con successo");
-        // Aggiorna lo stato dell'app o esegui altre operazioni necessarie dopo l'eliminazione del post
       } else {
         console.log("Errore durante l'eliminazione del post");
       }

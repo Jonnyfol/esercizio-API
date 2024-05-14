@@ -1,20 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "./styles.css";
 import CommentSection from "../comment-section/CommentSection";
 
-const BlogItem = ({ post, onDelete }) => {
+const BlogItem = ({ post, onDelete, userId }) => {
   const [showComments, setShowComments] = useState(false);
-  const [userData, setUserData] = useState(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const userData = JSON.parse(atob(token.split(".")[1]));
-      setUserData(userData);
-    }
-  }, []);
 
   const toggleComments = () => {
     setShowComments(!showComments);
@@ -40,8 +31,7 @@ const BlogItem = ({ post, onDelete }) => {
     }
   };
 
-  const isAuthor =
-    post.author && post.author.name === localStorage.getItem("username");
+  const isAuthor = userId === post.author.id;
 
   return (
     <div>

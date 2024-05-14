@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Col, Row } from "react-bootstrap";
 import BlogItem from "../blog-item/BlogItem";
+import { AuthContext } from "../../context/token";
 
 const BlogList = () => {
   const [posts, setPosts] = useState([]);
+  const { authorId } = useContext(AuthContext);
 
   const fetchPosts = async () => {
     try {
@@ -34,7 +36,7 @@ const BlogList = () => {
 
       if (response.ok) {
         console.log("Post eliminato con successo");
-        fetchPosts(); // Chiamata per aggiornare i post dopo l'eliminazione
+        fetchPosts();
       } else {
         console.log("Errore durante l'eliminazione del post");
       }
@@ -53,7 +55,12 @@ const BlogList = () => {
             marginBottom: 50,
           }}
         >
-          <BlogItem key={post._id} post={post} onDelete={handleDelete} />
+          <BlogItem
+            key={post._id}
+            post={post}
+            onDelete={handleDelete}
+            userId={authorId}
+          />
         </Col>
       ))}
     </Row>

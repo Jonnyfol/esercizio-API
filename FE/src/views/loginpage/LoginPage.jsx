@@ -45,6 +45,11 @@ const LoginPage = () => {
         throw new Error(data.message || "Errore durante il login.");
       }
 
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("avatar", data.user.avatar);
+      localStorage.setItem("username", data.user.username);
+      localStorage.setItem("userId", data.user.userId);
+
       setToken(data.token);
       setAuthorId(data.authorId);
       setusername(data.username);

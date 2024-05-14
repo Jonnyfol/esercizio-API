@@ -31,7 +31,6 @@ export default function AuthContextProvider({ children }) {
     localStorage.setItem("avatar", avatar);
   }, [avatar]);
 
-  // Crea l'oggetto di valore del contesto
   const value = {
     token,
     setToken,
